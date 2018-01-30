@@ -4,7 +4,7 @@
   "description": "To test the chatbot",
   "main": "webhook.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node webhook.js"
   },
   "author": "Anitha Thilagar",
   "license": "ISC",
