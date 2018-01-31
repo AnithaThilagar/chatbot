@@ -22,8 +22,8 @@ app.get('/webhook', (req, res) => {
 /* Handling all messenges */
 app.post('/webhook', (req, res) => {
   console.log('Inside post method');
-  console.log('Req '+JSON.stringify(req));
-  console.log('Res '+JSON.stringify(res));
+  console.log('Req '+req);
+  console.log('Res '+(res);
   res.status(200).end();
   /*if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
