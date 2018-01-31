@@ -2,8 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const request = require('request');
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 const server = app.listen(process.env.PORT || 2000, () => {
   console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
@@ -40,7 +40,7 @@ function sendMessage(event) {
   let text = event.message.text;
 
   request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
+    url: 'https://graph.facebook.com/v2.6/2001976020018830',
 	qs: {access_token: 'EAAdg47VZC9lIBAGbKwIqVtdYuNNDrjl0BiPis2mJGXXAMXmX8x7U0eUhkPOCUQ1VRriXLflZAUGHBK2ZCWJMvm6U69lH8N6ZA1YKiva4lBymbdMOBwUZCO7MDvimvozZCJQe6uTXGTy1V5nCZAYbZCmIAYO6A4oo6pfZChZCX19vf0AAZDZD'},
     method: 'POST',
     json: {
