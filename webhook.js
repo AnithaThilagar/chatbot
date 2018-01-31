@@ -11,6 +11,7 @@ const server = app.listen(process.env.PORT || 2000, () => {
 
 /* For Facebook Validation */
 app.get('/webhook', (req, res) => {
+  console.log('Inside get method');
   if (req.query['hub.verify_token'] === 'chatBot') {//req.query['hub.mode'] && 
     res.status(200).send(req.query['hub.challenge']);
   } else {
@@ -20,7 +21,7 @@ app.get('/webhook', (req, res) => {
 
 /* Handling all messenges */
 app.post('/webhook', (req, res) => {
-  console.log(req.body);
+  console.log('Inside post method');
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
       entry.messaging.forEach((event) => {
@@ -34,6 +35,7 @@ app.post('/webhook', (req, res) => {
 });
 
 function sendMessage(event) {
+  console.log("Inside send events ");
   let sender = event.sender.id;
   let text = event.message.text;
 
@@ -52,4 +54,5 @@ function sendMessage(event) {
         console.log('Error: ', response.body.error);
     }
   });
+  console.log("Req "+request);
 }
