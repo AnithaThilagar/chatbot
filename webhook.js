@@ -22,7 +22,10 @@ app.get('/webhook', (req, res) => {
 /* Handling all messenges */
 app.post('/webhook', (req, res) => {
   console.log('Inside post method');
-  if (req.body.object === 'page') {
+  console.log('Req '+JSON.stringify(req));
+  console.log('Res '+JSON.stringify(res));
+  res.status(200).end();
+  /*if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
       entry.messaging.forEach((event) => {
         if (event.message && event.message.text) {
@@ -31,7 +34,7 @@ app.post('/webhook', (req, res) => {
       });
     });
     res.status(200).end();
-  }
+  }*/
 });
 
 function sendMessage(event) {
@@ -56,3 +59,6 @@ function sendMessage(event) {
   });
   console.log("Req "+request);
 }
+
+
+//https://test-fb-chat-bot.herokuapp.com/webhook?hub.verify_token=chatBot
