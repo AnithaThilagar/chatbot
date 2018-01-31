@@ -1,26 +1,18 @@
-'use strict';
-const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-const APIAI_TOKEN = process.env.APIAI_TOKEN;
-const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
-
 const express = require('express');
 const bodyParser = require('body-parser');
-const request = require('request');
-const apiai = require('apiai');
-
 const app = express();
-app.use(bodyParser.json());
+const request = require('request');
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 const server = app.listen(process.env.PORT || 2000, () => {
   console.log('Express server listening on port %d in %s mode', server.address().port, app.settings.env);
 });
 
-const apiaiApp = apiai(APIAI_TOKEN);
-
 /* For Facebook Validation */
 app.get('/webhook', (req, res) => {
-  if (req.query['hub.mode'] && req.query['hub.verify_token'] === 'chatBot') {
+  console.log('Inside get method');
+  if (req.query['hub.verify_token'] === 'chatBot') {//req.query['hub.mode'] && 
     res.status(200).send(req.query['hub.challenge']);
   } else {
     res.status(403).end();
@@ -29,7 +21,7 @@ app.get('/webhook', (req, res) => {
 
 /* Handling all messenges */
 app.post('/webhook', (req, res) => {
-  console.log(req.body);
+  console.log('Inside post method');
   if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
       entry.messaging.forEach((event) => {
@@ -42,80 +34,28 @@ app.post('/webhook', (req, res) => {
   }
 });
 
-
-/* GET query from API.ai */
-
 function sendMessage(event) {
+  console.log("Inside send events ");
   let sender = event.sender.id;
   let text = event.message.text;
 
-  let apiai = apiaiApp.textRequest(text, {
-    sessionId: 'tabby_cat'
+  request({
+    url: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: {access_token: 'EAAdg47VZC9lIBALfd4KN6xNZBfxYcYqapuiMxZBa1jmQGSx2lolcLwYpDtBGKkYZAIYBU8RuF3Pi81O7eJ4hOjOqFJ3kBVVi0ZArq1nuEYo6dZA7LhBrBz2xdUdwamO4bX9bexncTskWCUy23GMKn0ZBUQrqz5mEEOzwzbjGxFPjAZDZD'},
+    method: 'POST',
+    json: {
+      recipient: {id: sender},
+      message: {text: text}
+    }
+  }, function (error, response) {
+    if (error) {
+        console.log('Error sending message: ', error);
+    } else if (response.body.error) {
+        console.log('Error: ', response.body.error);
+    }
   });
-
-  apiai.on('response', (response) => {
-    console.log(response)
-    let aiText = response.result.fulfillment.speech;
-
-    request({
-      url: 'https://graph.facebook.com/v2.6/me/messages',
-      qs: {access_token: 'EAAdg47VZC9lIBAGbKwIqVtdYuNNDrjl0BiPis2mJGXXAMXmX8x7U0eUhkPOCUQ1VRriXLflZAUGHBK2ZCWJMvm6U69lH8N6ZA1YKiva4lBymbdMOBwUZCO7MDvimvozZCJQe6uTXGTy1V5nCZAYbZCmIAYO6A4oo6pfZChZCX19vf0AAZDZD'},
-      method: 'POST',
-      json: {
-        recipient: {id: sender},
-        message: {text: aiText}
-      }
-    }, (error, response) => {
-      if (error) {
-          console.log('Error sending message: ', error);
-      } else if (response.body.error) {
-          console.log('Error: ', response.body.error);
-      }
-    });
-  });
-
-  apiai.on('error', (error) => {
-    console.log(error);
-  });
-
-  apiai.end();
+  console.log("Req "+request);
 }
-
-/* Webhook for API.ai to get response from the 3rd party API */
-app.post('/ai', (req, res) => {
-  console.log('*** Webhook for api.ai query ***');
-  console.log(req.body.result);
-
-  if (req.body.result.action === 'weather') {
-    console.log('*** weather ***');
-    let city = req.body.result.parameters['geo-city'];
-    let restUrl = 'http://api.openweathermap.org/data/2.5/weather?APPID='+'818cea3bd65bf4ace834a24d7adca117'+'&q='+city;
-
-    request.get(restUrl, (err, response, body) => {
-      if (!err && response.statusCode == 200) {
-        let json = JSON.parse(body);
-        console.log(json);
-        let tempF = ~~(json.main.temp * 9/5 - 459.67);
-        let tempC = ~~(json.main.temp - 273.15);
-        let msg = 'The current condition in ' + json.name + ' is ' + json.weather[0].description + ' and the temperature is ' + tempF + ' ℉ (' +tempC+ ' ℃).'
-        return res.json({
-          speech: msg,
-          displayText: msg,
-          source: 'weather'
-        });
-      } else {
-        let errorMessage = 'I failed to look up the city name.';
-        return res.status(400).json({
-          status: {
-            code: 400,
-            errorType: errorMessage
-          }
-        });
-      }
-    })
-  }
-
-});
 
 
 //https://test-fb-chat-bot.herokuapp.com/webhook?hub.verify_token=chatBot
