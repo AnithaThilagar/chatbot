@@ -1,7 +1,4 @@
 'use strict';
-const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-const APIAI_TOKEN = process.env.APIAI_TOKEN;
-const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -113,6 +110,14 @@ app.post('/ai', (req, res) => {
         });
       }
     })
+  } else if(req.body.result.action === 'input.welcome'){
+	  console.log('Inside Welcome intent');  	
+	  let msg = 'Hi welcome';
+	  return res.json({
+          speech: msg,
+          displayText: msg,
+          source: 'weather'
+      });
   }
 
 });
