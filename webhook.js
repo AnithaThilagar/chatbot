@@ -11,7 +11,7 @@ const server = app.listen(process.env.PORT || 2000, () => {
 
 /* For Facebook Validation */
 app.get('/webhook', (req, res) => {
-  if (req.query['hub.mode'] && req.query['hub.verify_token'] === 'chatBot') {
+  if (req.query['hub.verify_token'] === 'chatBot') {//req.query['hub.mode'] && 
     res.status(200).send(req.query['hub.challenge']);
   } else {
     res.status(403).end();
@@ -39,7 +39,7 @@ function sendMessage(event) {
 
   request({
     url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: {access_token: 'EAAdg47VZC9lIBAL58o4aCScmw6yi2gq3z6GUDUruH56ZAVEtTXmo2e3sa3ct3IPFxJvYpmZBUVD04nBCypVxhbgMLxoddVkjoXd6ZCDKw3fvVGs4txZBZAU0rB5xER3CMDSrsWwWyONL9aJORuagox8qsZBdDkS1FCWzHGNSYU9QwZDZD'},
+	qs: {access_token: 'EAAdg47VZC9lIBAL58o4aCScmw6yi2gq3z6GUDUruH56ZAVEtTXmo2e3sa3ct3IPFxJvYpmZBUVD04nBCypVxhbgMLxoddVkjoXd6ZCDKw3fvVGs4txZBZAU0rB5xER3CMDSrsWwWyONL9aJORuagox8qsZBdDkS1FCWzHGNSYU9QwZDZD'},
     method: 'POST',
     json: {
       recipient: {id: sender},
