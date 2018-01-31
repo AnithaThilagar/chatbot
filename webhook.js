@@ -23,7 +23,11 @@ app.get('/webhook', (req, res) => {
 app.post('/webhook', (req, res) => {
   console.log('Inside post method');
   console.log('Req '+req);
+<<<<<<< HEAD
   console.log('Res '+res);
+=======
+  console.log('Res '+(res);
+>>>>>>> origin/master
   res.status(200).end();
   /*if (req.body.object === 'page') {
     req.body.entry.forEach((entry) => {
